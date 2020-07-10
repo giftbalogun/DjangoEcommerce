@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load paystack %}
+
+{% block content %}
+
+<div id="navigation">
+    <!-- container -->
+    <div class="container">
+        <div id="responsive-nav">
+            <!-- category nav -->
+            <div class="category-nav show-on-click">
+                <span class="category-header">Categories <i class="fa fa-list"></i></span>
+                <ul class="category-list">
+                    <li><a c>Women’s Clothing</a></li>
+                    <li><a href="#">Men’s Clothing</a></li>
+                    <li><a href="#">Phones & Accessories </a></li>
+                    <li><a href="#">Computer & Office</a></li>
+                    <li><a href="#">Consumer Electronics</a></li>
+                    <li><a href="#">Jewelry & Watches </a></li>
+                    <li><a href="#">Bags & Shoes</a></li>
+                    <li><a href="#">View All</a></li>
+                </ul>
+            </div>
+            <!-- /category nav -->
+
+            <!-- menu nav -->
+            <div class="menu-nav">
+                <span class="menu-header">Menu <i class="fa fa-bars"></i></span>
+                <ul class="menu-list">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Sales</a></li>
+                </ul>
+            </div>
+            <!-- menu nav -->
+        </div>
+    </div>
+    <!-- /container -->
+</div>
+<!-- /NAVIGATION -->
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li class="active">Checkout</li>
+        </ul>
+    </div>
+</div>
+<!-- /BREADCRUMB -->
+
+<!-- section -->
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="billing-details" id="form-wrapper">
+                    <form id="form" class="clearfix">
+                        {% csrf_token %}
+                        {% if user.is_authenticated %}
+                        <div class="section-title">
+                            <h3 class="title">Billing Details</h3>
+                        </div>
+                        <div id="user-info">
+                            <div class="form-group">
+                                <input required class="input" type="text" id="name" name="name"
+                                    placeholder="First Name">
+                            </div>
+                            <div class="form-group">
+                                <input required class="input" type="email" id="email" name="email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div id="shipping-info">
+                            <div class="form-group">
+                                <input class="input" type="text" value="{{ user.customer.address }}" name="address"
+                                    placeholder="Address">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" value="{{ user.customer.city }}" name="city"
+                                    placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" value="{{ user.customer.zipcode }}" name="zipcode"
+                                    placeholder="ZIP Code">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" value="{{ user.customer.state }}" name="state"
+                                    placeholder="State">
+                            </div>
+                        </div>
+                        {% else %}
+                        <p>Already a customer ? <a href="#">Login</a></p>
+                        <div class="section-title">
+                            <h3 class="title">Billing Details</h3>
+                        </div>
+                        <div id="user-info">
+                            <div class="form-group">
+                                <input required class="input" type="text" id="name" name="name"
+                                    placeholder="First Name">
+                            </div>
+                            <div class="form-group">
+                                <input required class="input" type="email" id="email" name="email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div id="shipping-info">
+                            <div class="form-group">
+                                <input class="input" type="text" name="address" placeholder="Address">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" name="city" placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" name="zipcode" placeholder="ZIP Code">
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="text" name="state" placeholder="State">
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <hr>
+                        <button id="form-button" class="primary-btn" type="submit">Continue</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="order-summary clearfix">
+                    <div class="section-title">
+                        <h3 class="title">Order Review</h3>
+                    </div>
+                    <table class="shopping-cart-table table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th></th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Total</th>
+                                <th class="text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td class="thumb"><img src="{{item.product.imageURL}}" alt=""></td>
+                                <td class="details">
+                                    <a href="#">{{item.product.name}}</a>
+                                </td>
+                                <td class="price text-center">
+                                    <strong>${{item.product.price|floatformat:2}}</strong><br>
+                                <td class="qty text-center">
+                                    <p class="quantity">{{item.quantity}}</p>
+                                    <div class="quantity">
+                                        <button data-product="{{item.product.id}}" data-action="add"
+                                            class="chg-quantity update-cart main-btn icon-btn">
+                                            <i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+
+                                        <button data-product="{{item.product.id}}" data-action="remove"
+                                            class="chg-quantity update-cart main-btn icon-btn">
+                                            <i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                                    </div>
+                                <td class="total text-center"><strong class="primary-color">$32.50</strong></td>
+                                <td class="text-right"><button class="main-btn icon-btn"><i
+                                            class="fa fa-close"></i></button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th class="empty" colspan="3"></th>
+                                <th>SUBTOTAL</th>
+                                <th colspan="2" class="sub-total">$97.50</th>
+                            </tr>
+                            <tr>
+                                <th class="empty" colspan="3"></th>
+                                <th>SHIPING</th>
+                                <td colspan="2">Free Shipping</td>
+                            </tr>
+                            <tr>
+                                <th class="empty" colspan="3"></th>
+                                <th>TOTAL</th>
+                                <th colspan="2" class="total">${{order.get_cart_total|floatformat:2}}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="pull-right hidden" id="payment-info">
+                        <button id="make-payment" onclick="payWithPaystack()" class="primary-btn">Place Order</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /section -->
+
+<script src="http://js.paystack.co/v1/inline.js"></script>
+<!--<script src="https://www.paypal.com/sdk/js?client-id=YOUR-CLIENT-ID&currency=USD&disable-funding=credit"></script>-->
+
+<script>
+    var total_1 = '{{order.get_cart_total}}';
+    var tot_naira = (eval(total_1));
+    var ta = ((tot_naira / 100) * 1.5) + 100;
+    var total = eval(ta) + tot_naira;
+    var public_key = '{{ public_key }}'
+    var email = '{{ user.email }}'
+
+    function payWithPaystack() {
+        let handler = PaystackPop.setup({
+            key: public_key, // Replace with your public key
+            email: 'blgnbalogun@gmail.com',
+            amount: total.toFixed(2) * 100,
+            ref: '' + Math.floor((Math.random() * 1000000000) +
+                1
+            ),
+
+            callback: function () {
+                //let message = 'Payment complete! Reference: ' + response.reference;
+                //alert(message);
+                submitFormData()
+            },
+
+            onClose: function () {
+                alert('Window closed.');
+            },
+        });
+
+        handler.openIframe();
+    }
+
+</script>
+
+<script type="text/javascript">
+    var shipping = '{{order.shipping}}'
+
+    if (shipping == 'False') {
+        document.getElementById('shipping-info').innerHTML = ''
+    }
+
+    if (user != 'AnonymousUser') {
+        document.getElementById('user-info').innerHTML = ''
+    }
+
+    if (shipping == 'False' && user != 'AnonymousUser') {
+        //Hide entire form if user is logged in and shipping is false
+        document.getElementById('form-wrapper').classList.add("hidden");
+        //Show payment if logged in user wants to buy an item that does not require shipping
+        document.getElementById('payment-info').classList.remove("hidden");
+    }
+
+    var form = document.getElementById('form')
+    form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        console.log('Form Submitted...')
+        document.getElementById('form-button').classList.add("hidden");
+        document.getElementById('payment-info').classList.remove("hidden");
+    })
+
+    /*
+        document.getElementById('make-payment').addEventListener('submit', function (e) {
+            submitFormData()
+        })
+    */
+
+    function submitFormData() {
+        console.log('Payment button clicked')
+
+        var userFormData = {
+            'name': null,
+            'email': null,
+            'total': total,
+        }
+
+        var shippingInfo = {
+            'address': null,
+            'city': null,
+            'state': null,
+            'zipcode': null,
+        }
+
+        if (shipping != 'False') {
+            shippingInfo.address = form.address.value
+            shippingInfo.city = form.city.value
+            shippingInfo.state = form.state.value
+            shippingInfo.zipcode = form.zipcode.value
+        }
+
+        if (user == 'AnonymousUser') {
+            userFormData.name = form.name.value
+            userFormData.email = form.email.value
+        }
+
+        console.log('Shipping Info:', shippingInfo)
+        console.log('User Info:', userFormData)
+
+        var url = "/process_order/"
+        fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'applicaiton/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({
+                    'form': userFormData,
+                    'shipping': shippingInfo
+                }),
+
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+                alert('Transaction completed');
+
+                cart = {}
+                document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+                window.location.href = "{% url 'index' %}"
+
+            })
+    }
+
+</script>
+{% endblock content %}
